@@ -16,12 +16,13 @@ def play_slot():
     th = random.choice(e)
     return fi, se, th
 
-st.write(f"현재 보유 코인: **{st.session_state.allcoin}**")
+st.write(f"현재 보유 코인: **{st.session_state.get('allcoin', 500)}**")
 
 if st.session_state.allcoin <= 0:
     st.error("파산했습니다! 새로고침하여 다시 시작하세요.")
 else:
-    if st.button("🎮 슬롯 돌리기"):
+    # 슬롯 돌리기 버튼
+if st.button("🎮 슬롯 돌리기"):("🎮 슬롯 돌리기"):
         fi, se, th = play_slot()
         st.write(f"결과: {fi} | {se} | {th}")
 
@@ -30,3 +31,8 @@ else:
         else:
             st.session_state.allcoin -= 100
             st.warning(f"아쉽습니다! 현재 코인: {st.session_state.allcoin}")
+
+# 다시하기 기능
+if st.button("🔄 다시하기"):
+    st.session_state.allcoin = 500
+    st.rerun()
