@@ -7,6 +7,12 @@ st.title("🎰 간단 슬롯머신 게임")
 if "allcoin" not in st.session_state:
     st.session_state.allcoin = 500
 
+# 초기화할 다른 상태값들 기본값
+if "last_result" not in st.session_state:
+    st.session_state.last_result = None
+if "message" not in st.session_state:
+    st.session_state.message = ""
+
 e = [3, 4, 5]
 
 # 슬롯 돌리기 버튼
@@ -35,14 +41,17 @@ if st.session_state.allcoin <= 0:
 # 화면 출력
 st.write(f"현재 보유 코인: **{st.session_state.allcoin}**")
 
-if "last_result" in st.session_state:
+# 안전하게 결과 출력 — 값이 튜플일 때만 언팩
+if st.session_state.get("last_result"):
     fi, se, th = st.session_state.last_result
     st.write(f"결과: {fi} | {se} | {th}")
     st.warning(st.session_state.message)
 
-# 다시하기 버튼
+# 다시하기 버튼 — 키를 삭제해서 이후 언팩 오류 방지
 if st.button("🔄 다시하기"):
     st.session_state.allcoin = 500
-    st.session_state.last_result = None
+    # 안전하게 삭제 (키가 있을 때만)
+    if "last_result" in st.session_state:
+        del st.session_state["last_result"]
     st.session_state.message = ""
-    st.rerun()
+    st.experimental_rerun()
