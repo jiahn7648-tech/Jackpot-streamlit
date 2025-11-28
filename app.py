@@ -41,10 +41,15 @@ if st.session_state.allcoin <= 0:
 # 화면 표시
 st.write(f"현재 보유 코인: **{st.session_state.allcoin}**")
 
-# 안전하게 출력
+# 안전하게 출력 (🔍 숫자 크게 표시됨!)
 if st.session_state.get("last_result"):
     fi, se, th = st.session_state.last_result
-    st.write(f"결과: {fi} | {se} | {th}")
+    
+    st.markdown(
+        f"<h1 style='text-align:center; font-size:70px;'>{fi} | {se} | {th}</h1>",
+        unsafe_allow_html=True
+    )
+
     st.warning(st.session_state.message)
 
 # 다시하기 버튼
@@ -53,7 +58,5 @@ if st.button("🔄 다시하기"):
     if "last_result" in st.session_state:
         del st.session_state["last_result"]
     st.session_state.message = ""
-    st.rerun()  # 🔥 Streamlit Cloud에서 완전히 정상 작동!
-
-
+    st.rerun()
 
