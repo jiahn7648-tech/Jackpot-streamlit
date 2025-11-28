@@ -4,20 +4,24 @@ import time
 
 st.set_page_config(page_title="슬롯머신", layout="wide")
 
+# 제목
 st.markdown("<h1 style='text-align:center;'>🎰 슬롯머신 게임! 🎰</h1>", unsafe_allow_html=True)
 
+# 초기 상태 설정
 if "allcoin" not in st.session_state:
     st.session_state.allcoin = 1000
-
 if "last_result" not in st.session_state:
     st.session_state.last_result = None
 if "message" not in st.session_state:
     st.session_state.message = ""
 if "bankrupt_done" not in st.session_state:
     st.session_state.bankrupt_done = False
+if "pending_reset" not in st.session_state:
+    st.session_state.pending_reset = False  # 재시작 버튼 눌렀는지 체크
 
 symbols = ["🍒", "⭐", "7️⃣"]
 
+# 잭팟 애니메이션
 def jackpot_animation():
     placeholder = st.empty()
     for i in range(6):
@@ -30,7 +34,8 @@ def jackpot_animation():
     placeholder.empty()
     st.balloons()
 
-def bankrupt_overlay_animation():
+# 파산 애니메이션
+def bankrupt_animation():
     overlay = st.empty()
     overlay.markdown("""
         <div style="
@@ -52,18 +57,16 @@ def bankrupt_overlay_animation():
     time.sleep(0.5)
     overlay.empty()
 
+# 슬롯 돌리기
 if st.button("🎮 슬롯 돌리기"):
     if st.session_state.allcoin <= 0:
         st.error("💀 파산 상태입니다! 다시하기 버튼을 눌러 재시작하세요.")
     else:
-        a = random.choice(symbols)
-        b = random.choice(symbols)
-        c = random.choice(symbols)
-
+        a, b, c = random.choice(symbols), random.choice(symbols), random.choice(symbols)
         st.session_state.last_result = (a, b, c)
 
         jackpot = False
-        if a == "7️⃣" and b == "7️⃣" and c == "7️⃣":
+        if a == b == c == "7️⃣":
             st.session_state.allcoin += 500
             st.session_state.message = "🎉 JACKPOT!!! 7️⃣7️⃣7️⃣ → +500원!"
             jackpot = True
@@ -76,17 +79,19 @@ if st.button("🎮 슬롯 돌리기"):
 
         if st.session_state.allcoin <= 0 and not st.session_state.bankrupt_done:
             st.session_state.allcoin = 0
-            bankrupt_overlay_animation()
+            bankrupt_animation()
             st.session_state.bankrupt_done = True
 
         if jackpot:
             jackpot_animation()
 
+# 현재 코인 표시
 st.markdown(
     f"<h2 style='text-align:center; font-size:35px;'>💰 현재 보유 코인: <b>{st.session_state.allcoin}</b></h2>",
     unsafe_allow_html=True
 )
 
+# 슬롯 결과 표시
 if st.session_state.get("last_result"):
     a, b, c = st.session_state.last_result
     st.markdown(f"<h1 style='text-align:center; font-size:70px;'>{a} | {b} | {c}</h1>", unsafe_allow_html=True)
@@ -94,13 +99,15 @@ if st.session_state.get("last_result"):
 else:
     st.markdown("<h1 style='text-align:center; font-size:70px; color:gray;'>0 | 0 | 0</h1>", unsafe_allow_html=True)
 
-# 다시하기를 폼 안에 넣어 submit으로 처리 (버튼 1회 클릭에 안정적 초기화 및 새로고침)
-with st.form("reset_form"):
-    reset = st.form_submit_button("🔄 다시하기")
-    if reset:
-        st.session_state.allcoin = 1000
-        st.session_state.last_result = None
-        st.session_state.message = ""
-        st.session_state.bankrupt_done = False
-        st.experimental_rerun()
+# 다시하기 버튼
+if st.button("🔄 다시하기"):
+    st.session_state.pending_reset = True
 
+# 재시작 처리 (화면이 완전히 렌더링 된 후 상태 초기화)
+if st.session_state.pending_reset:
+    st.session_state.allcoin = 1000
+    st.session_state.last_result = None
+    st.session_state.message = ""
+    st.session_state.bankrupt_done = False
+    st.session_state.pending_reset = False
+    st.experimental_rerun()
