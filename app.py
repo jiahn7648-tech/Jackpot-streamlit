@@ -6,7 +6,7 @@ st.title("🎰 슬롯머신 게임!")
 
 # 초기 코인
 if "allcoin" not in st.session_state:
-    st.session_state.allcoin = 500
+    st.session_state.allcoin = 1000
 
 # 상태값 초기화
 if "last_result" not in st.session_state:
@@ -94,7 +94,7 @@ else:
 
 # 🔄 다시하기 버튼
 if st.button("🔄 다시하기"):
-    st.session_state.allcoin = 500
+    st.session_state.allcoin = 1000
     st.session_state.last_result = None
     st.session_state.message = ""
     st.rerun()
