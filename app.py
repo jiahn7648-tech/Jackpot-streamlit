@@ -1,5 +1,6 @@
 import streamlit as st
 import random
+import time
 
 st.title("🎰 슬롯머신 게임!")
 
@@ -16,6 +17,22 @@ if "message" not in st.session_state:
 # 슬롯 심볼 (3개만 사용)
 symbols = ["🍒", "⭐", "7️⃣"]
 
+# 🎉 잭팟 애니메이션 함수 (텍스트 반짝 + 풍선)
+def jackpot_animation():
+    placeholder = st.empty()
+    for i in range(6):
+        color = "gold" if i % 2 == 0 else "red"
+        placeholder.markdown(
+            f"""
+            <h1 style='text-align:center; font-size:85px; color:{color};'>
+                🎉🎉 7️⃣7️⃣7️⃣ JACKPOT!!! 🎉🎉
+            </h1>
+            """,
+            unsafe_allow_html=True
+        )
+        time.sleep(0.2)
+    placeholder.empty()
+    st.balloons()  # 풍선 애니메이션
 
 # 🎮 슬롯 돌리기 버튼
 if st.button("🎮 슬롯 돌리기"):
@@ -28,18 +45,21 @@ if st.button("🎮 슬롯 돌리기"):
 
         st.session_state.last_result = (a, b, c)
 
-        # 보상 규칙 적용
+        # 잭팟 처리
         if a == "7️⃣" and b == "7️⃣" and c == "7️⃣":
+            jackpot_animation()
             st.session_state.allcoin += 1000
             st.session_state.message = "🎉 JACKPOT!!! 7️⃣7️⃣7️⃣ → +1000원!"
+        # 다른 이모지 3개 일치
         elif a == b == c:
             st.session_state.allcoin += 100
             st.session_state.message = f"✨ 동일 이모지 3개! +100원"
+        # 나머지
         else:
             st.session_state.allcoin -= 100
             st.session_state.message = "아쉽습니다! -100원"
 
-        # 🔥 코인이 0이 되면 즉시 파산 알림
+        # 코인 0되면 즉시 파산 알림
         if st.session_state.allcoin <= 0:
             st.session_state.allcoin = 0
             st.error("💀 코인이 0이 되어 파산했습니다! 다시하기를 눌러주세요.")
@@ -55,7 +75,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# 슬롯 결과 표시
+# 🎞️ 슬롯 결과 표시
 if st.session_state.get("last_result"):
     a, b, c = st.session_state.last_result
     st.markdown(
@@ -75,5 +95,3 @@ if st.button("🔄 다시하기"):
     st.session_state.last_result = None
     st.session_state.message = ""
     st.rerun()
-
-
