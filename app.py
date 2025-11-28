@@ -64,10 +64,10 @@ if st.button("🎮 슬롯 돌리기") and not st.session_state.bankrupt:
     # 파산 체크
     if st.session_state.allcoin <= 0:
         st.session_state.allcoin = 0
-        st.session_state.bankrupt = True
-        bankrupt_animation()
         st.session_state.last_result = ("💀", "파산!", "💀")
         st.session_state.message = "게임을 재시작하세요!"
+        st.session_state.bankrupt = True
+        bankrupt_animation()
 
     if jackpot:
         jackpot_animation()
@@ -89,10 +89,10 @@ if st.session_state.message:
     st.info(st.session_state.message)
 
 # 다시하기 버튼
-if st.session_state.bankrupt and st.button("🔄 다시하기"):
-    st.session_state.allcoin = 1000
-    st.session_state.last_result = ("0", "0", "0")
-    st.session_state.message = ""
-    st.session_state.bankrupt = False
-    st.experimental_rerun()
-
+if st.session_state.bankrupt:
+    if st.button("🔄 다시하기"):
+        # 상태만 초기화 → rerun 없이 화면이 새로 그려짐
+        st.session_state.allcoin = 1000
+        st.session_state.last_result = ("0", "0", "0")
+        st.session_state.message = ""
+        st.session_state.bankrupt = False
