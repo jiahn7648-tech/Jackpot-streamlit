@@ -35,14 +35,18 @@ def jackpot_animation():
 # 파산 애니메이션 (반짝임)
 def bankrupt_animation():
     placeholder = st.empty()
-    for i in range(6):
-        color = "red" if i % 2 == 0 else "darkred"
+    for _ in range(8):  # 깜빡임 반복
         placeholder.markdown(
-            "<h1 style='text-align:center; font-size:70px;'>💀 파산! 💀</h1>",
+            "<h1 style='text-align:center; font-size:70px; color:red;'>💀 파산! 💀</h1>",
             unsafe_allow_html=True
         )
         time.sleep(0.3)
-    placeholder.empty()
+        placeholder.markdown(
+            "<h1 style='text-align:center; font-size:70px; color:darkred;'>💀 파산! 💀</h1>",
+            unsafe_allow_html=True
+        )
+        time.sleep(0.3)
+    return placeholder  # 반복 끝난 후에도 placeholder 남김
 
 # 슬롯 돌리기
 if st.button("🎮 슬롯 돌리기") and not st.session_state.bankrupt:
@@ -67,7 +71,7 @@ if st.button("🎮 슬롯 돌리기") and not st.session_state.bankrupt:
         st.session_state.last_result = ("💀", "파산!", "💀")
         st.session_state.message = "게임을 재시작하세요!"
         st.session_state.bankrupt = True
-        bankrupt_animation()
+        st.session_state.placeholder_bankrupt = bankrupt_animation()  # placeholder 저장
 
     if jackpot:
         jackpot_animation()
@@ -80,19 +84,24 @@ st.markdown(
 
 # 슬롯 결과 표시
 a, b, c = st.session_state.last_result
-st.markdown(
-    f"<h1 style='text-align:center; font-size:70px;'>{a} | {b} | {c}</h1>",
-    unsafe_allow_html=True
-)
+if not st.session_state.bankrupt:
+    st.markdown(
+        f"<h1 style='text-align:center; font-size:70px;'>{a} | {b} | {c}</h1>",
+        unsafe_allow_html=True
+    )
 
+# 메시지
 if st.session_state.message:
     st.info(st.session_state.message)
 
 # 다시하기 버튼
 if st.session_state.bankrupt:
     if st.button("🔄 다시하기"):
-        # 상태만 초기화 → rerun 없이 화면이 새로 그려짐
         st.session_state.allcoin = 1000
         st.session_state.last_result = ("0", "0", "0")
         st.session_state.message = ""
         st.session_state.bankrupt = False
+        # 파산 placeholder 제거
+        if "placeholder_bankrupt" in st.session_state:
+            st.session_state.placeholder_bankrupt.empty()
+            del st.session_state["placeholder_bankrupt"]
