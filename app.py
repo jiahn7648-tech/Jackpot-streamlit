@@ -112,3 +112,4 @@ if st.button("🔄 다시하기"):
     st.session_state.last_result = None
     st.session_state.message = ""
     st.session_state.bankrupt_done = False
+    st.experimental_rerun()
