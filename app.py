@@ -3,20 +3,21 @@ import random
 
 st.title("🎰 슬롯머신 게임!")
 
-# 초기 코인 설정
+# 초기 코인
 if "allcoin" not in st.session_state:
     st.session_state.allcoin = 500
 
-# 초기 상태값
+# 상태값 초기화
 if "last_result" not in st.session_state:
     st.session_state.last_result = None
 if "message" not in st.session_state:
     st.session_state.message = ""
 
-# ⭐ 사용되는 심볼은 3개만 사용
-symbols = ["🍒", "🔔", "7️⃣"]  
+# 슬롯 심볼 (3개만 사용)
+symbols = ["🍒", "⭐", "7️⃣"]
 
-# 슬롯 돌리기 버튼
+
+# 🎮 슬롯 돌리기 버튼
 if st.button("🎮 슬롯 돌리기"):
     if st.session_state.allcoin <= 0:
         st.warning("이미 파산 상태입니다! 다시하기를 눌러주세요.")
@@ -33,12 +34,13 @@ if st.button("🎮 슬롯 돌리기"):
             st.session_state.message = "🎉 JACKPOT!!! 7️⃣7️⃣7️⃣ → +1000원!"
         elif a == b == c:
             st.session_state.allcoin += 100
-            st.session_state.message = "✨ 동일 심볼 3개! +100원!"
+            st.session_state.message = f"✨ 동일 이모지 3개! +100원"
         else:
             st.session_state.allcoin -= 100
-            st.session_state.message = "아쉽습니다... -100원"
+            st.session_state.message = "아쉽습니다! -100원"
 
-# 현재 코인 크게 표시
+
+# 💰 현재 코인 큰 글씨 표시
 st.markdown(
     f"""
     <h2 style='text-align:center; font-size:35px;'>
@@ -48,7 +50,8 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# 슬롯 결과 표시
+
+# 🎞️ 슬롯 결과 표시
 if st.session_state.get("last_result"):
     a, b, c = st.session_state.last_result
     st.markdown(
@@ -57,9 +60,18 @@ if st.session_state.get("last_result"):
     )
     st.info(st.session_state.message)
 else:
-    # 처음 화면 기본 슬롯
+    # 처음 화면 초기 출력
     st.markdown(
-        "<h1 style='text-align:center; font-size:70px; color:gray;'>❔ | ❔
+        "<h1 style='text-align:center; font-size:70px; color:gray;'>0 | 0 | 0</h1>",
+        unsafe_allow_html=True
+    )
 
+
+# 🔄 다시하기 버튼
+if st.button("🔄 다시하기"):
+    st.session_state.allcoin = 500
+    st.session_state.last_result = None
+    st.session_state.message = ""
+    st.rerun()
 
 
