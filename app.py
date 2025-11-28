@@ -20,7 +20,7 @@ symbols = ["🍒", "⭐", "7️⃣"]
 # 🎮 슬롯 돌리기 버튼
 if st.button("🎮 슬롯 돌리기"):
     if st.session_state.allcoin <= 0:
-        st.warning("이미 파산 상태입니다! 다시하기를 눌러주세요.")
+        st.error("💀 파산 상태입니다! 다시하기 버튼을 눌러 재시작하세요.")
     else:
         a = random.choice(symbols)
         b = random.choice(symbols)
@@ -28,7 +28,7 @@ if st.button("🎮 슬롯 돌리기"):
 
         st.session_state.last_result = (a, b, c)
 
-        # 보상 규칙
+        # 보상 규칙 적용
         if a == "7️⃣" and b == "7️⃣" and c == "7️⃣":
             st.session_state.allcoin += 1000
             st.session_state.message = "🎉 JACKPOT!!! 7️⃣7️⃣7️⃣ → +1000원!"
@@ -39,8 +39,13 @@ if st.button("🎮 슬롯 돌리기"):
             st.session_state.allcoin -= 100
             st.session_state.message = "아쉽습니다! -100원"
 
+        # 🔥 코인이 0이 되면 즉시 파산 알림
+        if st.session_state.allcoin <= 0:
+            st.session_state.allcoin = 0
+            st.error("💀 코인이 0이 되어 파산했습니다! 다시하기를 눌러주세요.")
 
-# 💰 현재 코인 큰 글씨 표시
+
+# 💰 현재 코인 크게 표시
 st.markdown(
     f"""
     <h2 style='text-align:center; font-size:35px;'>
@@ -50,8 +55,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
-# 🎞️ 슬롯 결과 표시
+# 슬롯 결과 표시
 if st.session_state.get("last_result"):
     a, b, c = st.session_state.last_result
     st.markdown(
@@ -60,12 +64,10 @@ if st.session_state.get("last_result"):
     )
     st.info(st.session_state.message)
 else:
-    # 처음 화면 초기 출력
     st.markdown(
         "<h1 style='text-align:center; font-size:70px; color:gray;'>0 | 0 | 0</h1>",
         unsafe_allow_html=True
     )
-
 
 # 🔄 다시하기 버튼
 if st.button("🔄 다시하기"):
