@@ -7,65 +7,59 @@ st.title("🎰 슬롯머신 게임!")
 if "allcoin" not in st.session_state:
     st.session_state.allcoin = 500
 
-# 초기화할 상태값들 기본값
+# 초기 상태값
 if "last_result" not in st.session_state:
     st.session_state.last_result = None
 if "message" not in st.session_state:
     st.session_state.message = ""
 
-e = [3, 4, 5]
+# ⭐ 사용되는 심볼은 3개만 사용
+symbols = ["🍒", "🔔", "7️⃣"]  
 
 # 슬롯 돌리기 버튼
 if st.button("🎮 슬롯 돌리기"):
     if st.session_state.allcoin <= 0:
         st.warning("이미 파산 상태입니다! 다시하기를 눌러주세요.")
     else:
-        fi = random.choice(e)
-        se = random.choice(e)
-        th = random.choice(e)
+        a = random.choice(symbols)
+        b = random.choice(symbols)
+        c = random.choice(symbols)
 
-        st.session_state.last_result = (fi, se, th)
+        st.session_state.last_result = (a, b, c)
 
-        if fi == se == th:
-            st.session_state.message = "🎉 축하합니다! 모두 일치했습니다!!"
+        # 보상 규칙
+        if a == "7️⃣" and b == "7️⃣" and c == "7️⃣":
+            st.session_state.allcoin += 1000
+            st.session_state.message = "🎉 JACKPOT!!! 7️⃣7️⃣7️⃣ → +1000원!"
+        elif a == b == c:
+            st.session_state.allcoin += 100
+            st.session_state.message = "✨ 동일 심볼 3개! +100원!"
         else:
             st.session_state.allcoin -= 100
-            st.session_state.message = f"아쉽습니다! 현재 코인: {st.session_state.allcoin}"
+            st.session_state.message = "아쉽습니다... -100원"
 
-# 🔥 파산 체크
-if st.session_state.allcoin <= 0:
-    st.error("💀 파산했습니다! 다시하기 버튼을 눌러 재시작하세요.")
-
-# 🔥 현재 보유 코인 — 크게 중앙에 표시
+# 현재 코인 크게 표시
 st.markdown(
     f"""
     <h2 style='text-align:center; font-size:35px;'>
-        현재 보유 코인: <b>{st.session_state.allcoin}</b>
+        💰 현재 보유 코인: <b>{st.session_state.allcoin}</b>
     </h2>
     """,
     unsafe_allow_html=True
 )
 
-# 🔥 슬롯 결과 표시 (또는 기본 화면 000 표시)
+# 슬롯 결과 표시
 if st.session_state.get("last_result"):
-    fi, se, th = st.session_state.last_result
+    a, b, c = st.session_state.last_result
     st.markdown(
-        f"<h1 style='text-align:center; font-size:70px;'>{fi} | {se} | {th}</h1>",
+        f"<h1 style='text-align:center; font-size:70px;'>{a} | {b} | {c}</h1>",
         unsafe_allow_html=True
     )
-    st.warning(st.session_state.message)
+    st.info(st.session_state.message)
 else:
-    # 처음 화면 또는 초기화 화면 — 000 표시
+    # 처음 화면 기본 슬롯
     st.markdown(
-        "<h1 style='text-align:center; font-size:70px; color:gray;'>0 | 0 | 0</h1>",
-        unsafe_allow_html=True
-    )
+        "<h1 style='text-align:center; font-size:70px; color:gray;'>❔ | ❔
 
-# 다시하기 버튼
-if st.button("🔄 다시하기"):
-    st.session_state.allcoin = 500
-    st.session_state.last_result = None
-    st.session_state.message = ""
-    st.rerun()
 
 
