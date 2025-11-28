@@ -55,9 +55,9 @@ def bankrupt_overlay_animation():
             💀 파산! 💀
         </div>
     """, unsafe_allow_html=True)
-    # 0.5초 정도 표시 후 제거
+    # 잠시 표시 후 제거
     time.sleep(0.5)
-    overlay.empty()  # 애니메이션 제거
+    overlay.empty()
 
 # 슬롯 돌리기 버튼
 if st.button("🎮 슬롯 돌리기"):
@@ -90,7 +90,7 @@ if st.button("🎮 슬롯 돌리기"):
         if st.session_state.allcoin <= 0 and not st.session_state.bankrupt_done:
             st.session_state.allcoin = 0
             bankrupt_overlay_animation()
-            st.session_state.bankrupt_done = True  # 한 번만 표시
+            st.session_state.bankrupt_done = True  # 애니메이션 한 번만 표시
 
         # 잭팟 애니메이션
         if jackpot:
@@ -109,4 +109,4 @@ if st.button("🔄 다시하기"):
     st.session_state.last_result = None
     st.session_state.message = ""
     st.session_state.bankrupt_done = False
-    st.experimental_rerun()
+
