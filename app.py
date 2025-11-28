@@ -17,7 +17,7 @@ if "message" not in st.session_state:
 if "bankrupt_done" not in st.session_state:
     st.session_state.bankrupt_done = False
 if "pending_reset" not in st.session_state:
-    st.session_state.pending_reset = False  # 재시작 버튼 눌렀는지 체크
+    st.session_state.pending_reset = False  # 재시작 버튼 클릭 상태
 
 symbols = ["🍒", "⭐", "7️⃣"]
 
@@ -103,7 +103,7 @@ else:
 if st.button("🔄 다시하기"):
     st.session_state.pending_reset = True
 
-# 재시작 처리 (화면이 완전히 렌더링 된 후 상태 초기화)
+# 재시작 처리: 화면 렌더링 후 안전하게 초기화
 if st.session_state.pending_reset:
     st.session_state.allcoin = 1000
     st.session_state.last_result = None
@@ -111,3 +111,4 @@ if st.session_state.pending_reset:
     st.session_state.bankrupt_done = False
     st.session_state.pending_reset = False
     st.experimental_rerun()
+
