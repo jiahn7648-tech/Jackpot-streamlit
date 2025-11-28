@@ -9,7 +9,7 @@ st.markdown("<h1 style='text-align:center;'>🎰 슬롯머신 게임! 🎰</h1>"
 
 # 초기 코인
 if "allcoin" not in st.session_state:
-    st.session_state.allcoin = 1000  # 초기 코인
+    st.session_state.allcoin = 1000
 
 # 상태값 초기화
 if "last_result" not in st.session_state:
@@ -55,14 +55,13 @@ def bankrupt_overlay_animation():
             💀 파산! 💀
         </div>
     """, unsafe_allow_html=True)
-    # 잠시 표시 후 제거
     time.sleep(0.5)
     overlay.empty()
 
 # 슬롯 돌리기 버튼
 if st.button("🎮 슬롯 돌리기"):
     if st.session_state.allcoin <= 0:
-        st.error("💀 파산 상태입니다! 다시하기를 눌러 재시작하세요.")
+        st.error("💀 파산 상태입니다! 다시하기 버튼을 눌러 재시작하세요.")
     else:
         a = random.choice(symbols)
         b = random.choice(symbols)
@@ -72,7 +71,7 @@ if st.button("🎮 슬롯 돌리기"):
 
         jackpot = False
         if a == "7️⃣" and b == "7️⃣" and c == "7️⃣":
-            st.session_state.allcoin += 500  # 잭팟 500원
+            st.session_state.allcoin += 500  # 잭팟
             st.session_state.message = "🎉 JACKPOT!!! 7️⃣7️⃣7️⃣ → +500원!"
             jackpot = True
         elif a == b == c:
@@ -90,7 +89,7 @@ if st.button("🎮 슬롯 돌리기"):
         if st.session_state.allcoin <= 0 and not st.session_state.bankrupt_done:
             st.session_state.allcoin = 0
             bankrupt_overlay_animation()
-            st.session_state.bankrupt_done = True  # 애니메이션 한 번만 표시
+            st.session_state.bankrupt_done = True
 
         # 잭팟 애니메이션
         if jackpot:
@@ -99,8 +98,11 @@ if st.button("🎮 슬롯 돌리기"):
 # 현재 코인 표시
 st.markdown(f"<h2 style='text-align:center; font-size:35px;'>💰 현재 보유 코인: <b>{st.session_state.allcoin}</b></h2>", unsafe_allow_html=True)
 
-# 처음 화면 기본 슬롯
-if not st.session_state.get("last_result"):
+# 슬롯 결과 또는 기본 슬롯 표시
+if st.session_state.get("last_result"):
+    a, b, c = st.session_state.last_result
+    st.markdown(f"<h1 style='text-align:center; font-size:70px;'>{a} | {b} | {c}</h1>", unsafe_allow_html=True)
+else:
     st.markdown("<h1 style='text-align:center; font-size:70px; color:gray;'>0 | 0 | 0</h1>", unsafe_allow_html=True)
 
 # 다시하기 버튼
