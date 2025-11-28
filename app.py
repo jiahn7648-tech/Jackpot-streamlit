@@ -6,7 +6,7 @@ st.title("🎰 슬롯머신 게임!")
 
 # 초기 코인
 if "allcoin" not in st.session_state:
-    st.session_state.allcoin = 1000
+    st.session_state.allcoin = 1000  # 초기 코인 1000원
 
 # 상태값 초기화
 if "last_result" not in st.session_state:
@@ -39,18 +39,20 @@ if st.button("🎮 슬롯 돌리기"):
     if st.session_state.allcoin <= 0:
         st.error("💀 파산 상태입니다! 다시하기 버튼을 눌러 재시작하세요.")
     else:
+        # 랜덤 심볼 선택
         a = random.choice(symbols)
         b = random.choice(symbols)
         c = random.choice(symbols)
 
+        # 슬롯 결과 저장
         st.session_state.last_result = (a, b, c)
 
         # 결과 계산
-        jackpot = False  # 잭팟 여부 플래그
+        jackpot = False
         if a == "7️⃣" and b == "7️⃣" and c == "7️⃣":
             st.session_state.allcoin += 1000
             st.session_state.message = "🎉 JACKPOT!!! 7️⃣7️⃣7️⃣ → +1000원!"
-            jackpot = True  # 애니메이션 실행 플래그
+            jackpot = True
         elif a == b == c:
             st.session_state.allcoin += 100
             st.session_state.message = "✨ 동일 이모지 3개! +100원"
@@ -58,12 +60,20 @@ if st.button("🎮 슬롯 돌리기"):
             st.session_state.allcoin -= 100
             st.session_state.message = "아쉽습니다! -100원"
 
-        # 코인 0되면 즉시 파산 알림
+        # 코인 0 체크
         if st.session_state.allcoin <= 0:
             st.session_state.allcoin = 0
             st.error("💀 코인이 0이 되어 파산했습니다! 다시하기를 눌러주세요.")
 
-        # 잭팟 애니메이션 실행 (결과 계산 후)
+        # 슬롯 심볼 먼저 화면에 표시
+        a, b, c = st.session_state.last_result
+        st.markdown(
+            f"<h1 style='text-align:center; font-size:70px;'>{a} | {b} | {c}</h1>",
+            unsafe_allow_html=True
+        )
+        st.info(st.session_state.message)
+
+        # 잭팟이면 애니메이션 실행
         if jackpot:
             jackpot_animation()
 
@@ -77,16 +87,8 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# 🎞️ 슬롯 결과 표시
-if st.session_state.get("last_result"):
-    a, b, c = st.session_state.last_result
-    st.markdown(
-        f"<h1 style='text-align:center; font-size:70px;'>{a} | {b} | {c}</h1>",
-        unsafe_allow_html=True
-    )
-    st.info(st.session_state.message)
-else:
-    # 처음 화면 기본 슬롯
+# 🎞️ 처음 화면 기본 슬롯 (0 | 0 | 0)
+if not st.session_state.get("last_result"):
     st.markdown(
         "<h1 style='text-align:center; font-size:70px; color:gray;'>0 | 0 | 0</h1>",
         unsafe_allow_html=True
