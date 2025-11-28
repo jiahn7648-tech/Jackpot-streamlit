@@ -6,7 +6,7 @@ st.title("🎰 슬롯머신 게임!")
 
 # 초기 코인
 if "allcoin" not in st.session_state:
-    st.session_state.allcoin = 1000
+    st.session_state.allcoin = 500
 
 # 상태값 초기화
 if "last_result" not in st.session_state:
@@ -45,16 +45,15 @@ if st.button("🎮 슬롯 돌리기"):
 
         st.session_state.last_result = (a, b, c)
 
-        # 잭팟 처리
+        # 결과 계산
+        jackpot = False  # 잭팟 여부 플래그
         if a == "7️⃣" and b == "7️⃣" and c == "7️⃣":
-            jackpot_animation()
             st.session_state.allcoin += 1000
             st.session_state.message = "🎉 JACKPOT!!! 7️⃣7️⃣7️⃣ → +1000원!"
-        # 다른 이모지 3개 일치
+            jackpot = True  # 애니메이션 실행 플래그
         elif a == b == c:
             st.session_state.allcoin += 100
-            st.session_state.message = f"✨ 동일 이모지 3개! +100원"
-        # 나머지
+            st.session_state.message = "✨ 동일 이모지 3개! +100원"
         else:
             st.session_state.allcoin -= 100
             st.session_state.message = "아쉽습니다! -100원"
@@ -64,6 +63,9 @@ if st.button("🎮 슬롯 돌리기"):
             st.session_state.allcoin = 0
             st.error("💀 코인이 0이 되어 파산했습니다! 다시하기를 눌러주세요.")
 
+        # 잭팟 애니메이션 실행 (결과 계산 후)
+        if jackpot:
+            jackpot_animation()
 
 # 💰 현재 코인 크게 표시
 st.markdown(
@@ -84,6 +86,7 @@ if st.session_state.get("last_result"):
     )
     st.info(st.session_state.message)
 else:
+    # 처음 화면 기본 슬롯
     st.markdown(
         "<h1 style='text-align:center; font-size:70px; color:gray;'>0 | 0 | 0</h1>",
         unsafe_allow_html=True
@@ -91,8 +94,7 @@ else:
 
 # 🔄 다시하기 버튼
 if st.button("🔄 다시하기"):
-    st.session_state.allcoin = 1000
-    
+    st.session_state.allcoin = 500
     st.session_state.last_result = None
     st.session_state.message = ""
     st.rerun()
