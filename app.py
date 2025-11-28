@@ -14,8 +14,8 @@ if "last_result" not in st.session_state:
     st.session_state.last_result = ("0", "0", "0")
 if "message" not in st.session_state:
     st.session_state.message = ""
-if "bankrupt_done" not in st.session_state:
-    st.session_state.bankrupt_done = False
+if "bankrupt_animation_done" not in st.session_state:
+    st.session_state.bankrupt_animation_done = False
 
 symbols = ["🍒", "⭐", "7️⃣"]
 
@@ -32,8 +32,8 @@ def jackpot_animation():
     placeholder.empty()
     st.balloons()
 
-# 파산 애니메이션
-def bankrupt_animation():
+# 파산 애니메이션 (완전히 끝난 후 초기화)
+def bankrupt_animation_and_reset():
     overlay = st.empty()
     overlay.markdown("""
         <div style="
@@ -52,8 +52,15 @@ def bankrupt_animation():
             💀 파산! 💀
         </div>
     """, unsafe_allow_html=True)
-    time.sleep(0.5)
+    time.sleep(1.0)  # 애니메이션 시간
     overlay.empty()
+    
+    # 애니메이션이 끝나면 상태 초기화 후 rerun
+    st.session_state.allcoin = 1000
+    st.session_state.last_result = ("0", "0", "0")
+    st.session_state.message = ""
+    st.session_state.bankrupt_animation_done = False
+    st.experimental_rerun()
 
 # 슬롯 돌리기
 if st.button("🎮 슬롯 돌리기"):
@@ -72,16 +79,11 @@ if st.button("🎮 슬롯 돌리기"):
         st.session_state.allcoin -= 100
         st.session_state.message = "아쉽습니다! -100원"
 
-    # 파산 시 자동 재시작
-    if st.session_state.allcoin <= 0:
+    # 파산 시 애니메이션 진행 후 자동 초기화
+    if st.session_state.allcoin <= 0 and not st.session_state.bankrupt_animation_done:
         st.session_state.allcoin = 0
-        bankrupt_animation()
-        # 상태 초기화
-        st.session_state.allcoin = 1000
-        st.session_state.last_result = ("0", "0", "0")
-        st.session_state.message = ""
-        st.session_state.bankrupt_done = False
-        st.experimental_rerun()
+        st.session_state.bankrupt_animation_done = True
+        bankrupt_animation_and_reset()
 
     if jackpot:
         jackpot_animation()
