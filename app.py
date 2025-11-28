@@ -16,8 +16,6 @@ if "message" not in st.session_state:
     st.session_state.message = ""
 if "bankrupt_done" not in st.session_state:
     st.session_state.bankrupt_done = False
-if "reset_flag" not in st.session_state:
-    st.session_state.reset_flag = False  # 안전한 재시작 플래그
 
 symbols = ["🍒", "⭐", "7️⃣"]
 
@@ -58,7 +56,7 @@ def bankrupt_animation():
     overlay.empty()
 
 # 슬롯 돌리기
-if st.button("🎮 슬롯 돌리기") and st.session_state.allcoin > 0:
+if st.button("🎮 슬롯 돌리기"):
     a, b, c = random.choice(symbols), random.choice(symbols), random.choice(symbols)
     st.session_state.last_result = (a, b, c)
 
@@ -74,10 +72,16 @@ if st.button("🎮 슬롯 돌리기") and st.session_state.allcoin > 0:
         st.session_state.allcoin -= 100
         st.session_state.message = "아쉽습니다! -100원"
 
-    if st.session_state.allcoin <= 0 and not st.session_state.bankrupt_done:
+    # 파산 시 자동 재시작
+    if st.session_state.allcoin <= 0:
         st.session_state.allcoin = 0
         bankrupt_animation()
-        st.session_state.bankrupt_done = True
+        # 상태 초기화
+        st.session_state.allcoin = 1000
+        st.session_state.last_result = ("0", "0", "0")
+        st.session_state.message = ""
+        st.session_state.bankrupt_done = False
+        st.experimental_rerun()
 
     if jackpot:
         jackpot_animation()
@@ -93,17 +97,3 @@ a, b, c = st.session_state.last_result
 st.markdown(f"<h1 style='text-align:center; font-size:70px;'>{a} | {b} | {c}</h1>", unsafe_allow_html=True)
 if st.session_state.message:
     st.info(st.session_state.message)
-
-# 다시하기 버튼
-if st.button("🔄 다시하기"):
-    st.session_state.reset_flag = True
-
-# 재시작 처리
-if st.session_state.reset_flag:
-    st.session_state.allcoin = 1000
-    st.session_state.last_result = ("0", "0", "0")
-    st.session_state.message = ""
-    st.session_state.bankrupt_done = False
-    st.session_state.reset_flag = False
-    st.experimental_rerun()
-
