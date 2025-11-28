@@ -4,7 +4,8 @@ import time
 
 st.set_page_config(page_title="슬롯머신", layout="wide")
 
-st.title("🎰 슬롯머신 게임!")
+# 🎯 제목 (가운데)
+st.markdown("<h1 style='text-align:center;'>🎰 슬롯머신 게임! 🎰</h1>", unsafe_allow_html=True)
 
 # 초기 코인
 if "allcoin" not in st.session_state:
@@ -69,8 +70,12 @@ def bankrupt_overlay_animation():
     </style>
     """, unsafe_allow_html=True)
 
-# 슬롯 돌리기 버튼
-if st.button("🎮 슬롯 돌리기"):
+# 🎮 슬롯 돌리기 버튼 (가운데)
+st.markdown("<div style='text-align:center;'>", unsafe_allow_html=True)
+spin_clicked = st.button("🎮 슬롯 돌리기")
+st.markdown("</div>", unsafe_allow_html=True)
+
+if spin_clicked:
     if st.session_state.allcoin <= 0:
         st.error("💀 파산 상태입니다! 다시하기 버튼을 눌러 재시작하세요.")
     else:
@@ -111,7 +116,7 @@ if st.button("🎮 슬롯 돌리기"):
         if jackpot:
             jackpot_animation()
 
-# 현재 코인 크게 표시
+# 💰 현재 코인 크게 표시 (가운데)
 st.markdown(
     f"<h2 style='text-align:center; font-size:35px;'>💰 현재 보유 코인: <b>{st.session_state.allcoin}</b></h2>",
     unsafe_allow_html=True
@@ -124,9 +129,11 @@ if not st.session_state.get("last_result"):
         unsafe_allow_html=True
     )
 
-# 다시하기 버튼
+# 🔄 다시하기 버튼 (가운데)
+st.markdown("<div style='text-align:center;'>", unsafe_allow_html=True)
 if st.button("🔄 다시하기"):
     st.session_state.allcoin = 1000
     st.session_state.last_result = None
     st.session_state.message = ""
     st.rerun()
+st.markdown("</div>", unsafe_allow_html=True)
