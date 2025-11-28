@@ -91,7 +91,7 @@ else:
 
 # 🔄 다시하기 버튼
 if st.button("🔄 다시하기"):
-    st.session_state.allcoin = 1000-
+    st.session_state.allcoin = 1000
     
     st.session_state.last_result = None
     st.session_state.message = ""
